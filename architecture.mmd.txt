@@ -1,0 +1,14 @@
+C4Container
+title Diagram Architektury C4 - Level 2
+
+Person(user, "Użytkownik", "Klient aplikacji")
+
+System_Boundary(app, "Aplikacja Cloud-App") {
+    Container(frontend, "Frontend", "React 19", "Warstwa prezentacji")
+    Container(backend, "Backend API", "Node 24", "Warstwa logiki biznesowej")
+    ContainerDb(db, "Baza Danych", "PostgreSQL", "Warstwa danych")
+}
+
+Rel(user, frontend, "Używa", "HTTPS / 443")
+Rel(frontend, backend, "Wywołuje API", "HTTP / 5000")
+Rel(backend, db, "Odczyt i zapis", "TCP / 5432")
