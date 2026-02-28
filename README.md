@@ -1,5 +1,6 @@
 # Projekt: cloud-app
 **Imię i nazwisko:** =Filip Wójcik
+
 **Nr studenta:** 95747
 
 ## Stos technologiczny
@@ -16,4 +17,4 @@
 
 ## Status Projektu
 * [x] **Artefakt 1:** Architektura i struktura folderów.
-* [ ] **Artefakt 2:** Środowisko wielokontenerowe uruchomione lokalnie (Docker Compose).
+* [x] **Artefakt 2:** Środowisko wielokontenerowe uruchomione lokalnie (Docker Compose).
