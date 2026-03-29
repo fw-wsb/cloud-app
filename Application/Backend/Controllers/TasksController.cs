@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
+using Backend.Dtos;
 
 namespace Backend.Controllers;
 
@@ -7,47 +8,51 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class TasksController : ControllerBase
 {
-    private readonly List<TaskItem> _tasks;
-
-    public TasksController(List<TaskItem> tasks)
+    // Statyczna lista udająca bazę danych na potrzeby Zadania 5
+    private static List<TaskItem> _tasks = new List<TaskItem>
     {
-        _tasks = tasks;
-    }
+        new TaskItem { Id = 1, Name = "Zadanie 1", IsCompleted = false }
+    };
 
     [HttpGet]
-    public ActionResult<IEnumerable<TaskItem>> GetAll() => Ok(_tasks);
+    public ActionResult<IEnumerable<TaskReadDto>> GetAll()
+    {
+        var dtos = _tasks.Select(t => new TaskReadDto 
+        { 
+            Id = t.Id, 
+            Name = t.Name, 
+            IsCompleted = t.IsCompleted 
+        });
+        return Ok(dtos);
+    }
 
     [HttpGet("{id}")]
-    public ActionResult<TaskItem> GetById(int id)
+    public ActionResult<TaskReadDto> GetById(int id)
     {
         var task = _tasks.FirstOrDefault(t => t.Id == id);
-        return task == null ? NotFound() : Ok(task);
+        if (task == null) return NotFound();
+
+        var dto = new TaskReadDto 
+        { 
+            Id = task.Id, 
+            Name = task.Name, 
+            IsCompleted = task.IsCompleted 
+        };
+        return Ok(dto);
     }
 
     [HttpPost]
     public ActionResult Create(TaskItem task)
     {
-        task.Id = _tasks.Max(t => t.Id) + 1;
+        // Automatyczne nadawanie ID
+        task.Id = _tasks.Count > 0 ? _tasks.Max(t => t.Id) + 1 : 1;
+        
+        // Ustawienie daty utworzenia (widocznej tylko w bazie/encji, nie w DTO)
+        task.CreatedAt = DateTime.UtcNow;
+        
         _tasks.Add(task);
+        
+        // Zwracamy status 201 Created
         return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
-    }
-
-    [HttpPut("{id}")]
-    public IActionResult Update(int id, TaskItem task)
-    {
-        var existing = _tasks.FirstOrDefault(t => t.Id == id);
-        if (existing == null) return NotFound();
-        existing.Name = task.Name;
-        existing.IsCompleted = task.IsCompleted;
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
-    {
-        var task = _tasks.FirstOrDefault(t => t.Id == id);
-        if (task == null) return NotFound();
-        _tasks.Remove(task);
-        return NoContent();
     }
 }
