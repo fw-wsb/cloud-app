@@ -5,7 +5,7 @@ function App() {
     const [tasks, setTasks] = useState([]);
     const [newTaskName, setNewTaskName] = useState('');
     const [error, setError] = useState('');
-    const apiUrl = 'http://localhost:5015/api/tasks'; 
+    const apiUrl = 'https://task-manager-api-filip-dvf2bkg7gtc2d3cf.germanywestcentral-01.azurewebsites.net/api/tasks'; 
 
     const fetchTasks = () => {
         axios.get(apiUrl)
@@ -32,9 +32,17 @@ function App() {
             .catch(() => setError('Nie udało się dodać zadania.'));
     };
 
+    const handleDeleteTask = (id) => {
+        axios.delete(`${apiUrl}/${id}`)
+            .then(() => {
+                fetchTasks();
+            })
+            .catch(() => setError('Nie udało się usunąć zadania.'));
+    };
+
     return (
-        <div style={{ padding: '40px', background: '#1a1a1a', color: 'white', minHeight: '100vh', textAlign: 'center' }}>
-            <h1>Projekt: cloud-app (Zadanie 5.4)</h1>
+        <div style={{ padding: '40px', background: '#0f172a', color: 'white', minHeight: '100vh', textAlign: 'center' }}>
+            <h1>Projekt: cloud-app (Zadanie 8.4)</h1>
             <p>Student: Filip Wójcik (95747)</p>
             
             <form onSubmit={handleAddTask} style={{ margin: '20px 0' }}>
@@ -52,11 +60,17 @@ function App() {
 
             {error && <p style={{ color: '#ff6b6b' }}>{error}</p>}
 
-            <div style={{ background: '#333', padding: '20px', borderRadius: '10px', display: 'inline-block', minWidth: '300px' }}>
+            <div style={{ background: '#1e293b', padding: '20px', borderRadius: '10px', display: 'inline-block', minWidth: '350px' }}>
                 <ul style={{ listStyle: 'none', padding: 0 }}>
                     {tasks.map(t => (
-                        <li key={t.id} style={{ borderBottom: '1px solid #444', padding: '10px' }}>
-                            {t.name} {t.isCompleted ? '✅' : '⏳'}
+                        <li key={t.id} style={{ borderBottom: '1px solid #334155', padding: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span>{t.name} {t.isCompleted ? '✅' : '⏳'}</span>
+                            <button 
+                                onClick={() => handleDeleteTask(t.id)} 
+                                style={{ marginLeft: '20px', background: '#ef4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}
+                            >
+                                Usuń
+                            </button>
                         </li>
                     ))}
                 </ul>
