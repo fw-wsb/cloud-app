@@ -45,4 +45,4 @@ app.UseCors();
 app.UseAuthorization();
 app.MapControllers();
 
-app.Run();A
+app.Run();
